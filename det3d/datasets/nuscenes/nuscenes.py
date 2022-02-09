@@ -1,3 +1,5 @@
+# 20220207 
+# 
 import sys
 import cv2
 import pickle
@@ -17,19 +19,19 @@ except:
     print("nuScenes devkit not found!")
 
 from det3d.datasets.custom import PointCloudDataset
-from det3d.datasets.nuscenes.nusc_common import (
+from det3d.datasets.nuscenes.nusc_common import ( # 读取devkit
     general_to_detection,
     cls_attr_dist,
     _second_det_to_nusc_box,
     _lidar_nusc_box_to_global,
     eval_main
 )
-from det3d.datasets.registry import DATASETS
+from det3d.datasets.registry import DATASETS  #这部分是warper吗？
 
 
 @DATASETS.register_module
 class NuScenesDataset(PointCloudDataset):
-    NumPointFeatures = 5  # x, y, z, intensity, ring_index
+    NumPointFeatures = 5  # x, y, z, intensity, ring_index   看一下ring_index怎么定义的呢？
 
     def __init__(
         self,
@@ -59,10 +61,10 @@ class NuScenesDataset(PointCloudDataset):
         if not hasattr(self, "_nusc_infos"):
             self.load_infos(self._info_path)
 
-        self._num_point_features = NuScenesDataset.NumPointFeatures
+        self._num_point_features = NuScenesDataset.NumPointFeatures  # 5
         self._name_mapping = general_to_detection
 
-        self.painted = kwargs.get('painted', False)
+        self.painted = kwargs.get('painted', False)  # paint是 mask？
         if self.painted:
             self._num_point_features += 10 
 
@@ -83,7 +85,7 @@ class NuScenesDataset(PointCloudDataset):
                             dtype=np.float32).reshape(1, 1, 3)
             self.std = np.array([0.28863828, 0.27408164, 0.27809835],
                            dtype=np.float32).reshape(1, 1, 3)
-            self.target_size = (3, 448, 800)
+            self.target_size = (3, 448, 800) # image size
 
     def reset(self):
         self.logger.info(f"re-sample {self.frac} frames from full set")
